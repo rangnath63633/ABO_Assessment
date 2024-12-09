@@ -1,0 +1,404 @@
+This question assesses your ability to perform CRUD functionality on a relational database using SQL.
+
+Given a new table named cities which includes columns for:
+
+id (integer)
+name (text)
+country (text)
+population (integer)
+Complete the following tasks:
+
+Insert two new cities into the cities table. The values for each city are up to you, but be sure to view the whole table to see all fields and avoid duplicating the ID of an existing city.
+Write a SQL query that retrieves all cities from the cities table whose country is "Japan".
+Update the population of city New York City in the cities table to 8468000.
+Delete city Lyon from the cities table.
+
+-----------------------------------
+INSERT INTO cities (id, name, country,population)
+VALUES
+(11, 'Bengaluru', 'India', 13929286),
+(12, 'Mysore', 'India', 2739810);
+
+SELECT * FROM cities WHERE country = 'Japan';
+
+UPDATE cities SET population = 8468000
+WHERE name = 'New York City';
+
+DELETE FROM cities WHERE name = 'Lyon';
+-------------------------------------
+
+This question assesses your ability to query data from a relational database using SQL.
+
+Given a new table named dogs which includes columns for:
+
+id (integer)
+name (text)
+breed (text)
+age_in_years (integer)
+Complete the following tasks:
+
+Write a SQL query that retrieves all dogs from the dogs table whose breed is "Shiba Inu".
+Write a SQL query that retrieves all dogs from the dogs table who are older than 5.
+------------------------------------------
+SELECT * FROM dogs WHERE breed = 'Shiba Inu';
+
+SELECT * FROM dogs WHERE age_in_years > 5;
+-------------------------------------------
+
+This question assesses your ability to perform calculations on queries using SQL functions.
+
+Given a new table named players which includes columns for:
+
+id (integer)
+first_name (text)
+last_name (text)
+position (text)
+goals (integer)
+assists (integer)
+Complete the following tasks:
+
+Write a SQL function that averages the assists of all players who play the position "forward".
+Write a SQL function that returns the last_name, first_name, and goals of the player with the minimum amount of goals.
+------------------------------------------
+SELECT AVG(assists) AS average_assists
+FROM players
+WHERE position = 'forward';
+
+SELECT last_name, first_name, goals FROM
+players WHERE goals=(SELECT MIN(goals) FROM players);
+
+
+------------------------------------
+This question is assessing your ability to combine multiple rows together using SQL aggregate functions.
+
+Given a table named users which includes columns for:
+
+id (integer)
+name (varchar)
+age (integer)
+country (varchar)
+Write a SQL query that retrieves the country names and the corresponding minimum age user belonging to that country from the users table, using an aggregate function to find the minimum age for each country.
+
+Requirements and Assumptions:
+
+The resulting rows should only show each country once with the minimum age of the users belonging to that country.
+--------------------------------------
+SELECT country, MIN(age) AS min_age
+FROM users
+GROUP BY country;
+---------------------------------------
+This question is assessing your ability to query multiple tables using SQL joins.
+
+Given a table named employees which includes columns for:
+
+id (integer)
+employee_name (varchar)
+department_id (integer)
+and a second table named departments which includes columns for:
+
+id (integer)
+department_name (varchar)
+Write a SQL query that joins the two tables by the department ID and selects the employee name and department name in the joined table.
+
+Requirements and Assumptions:
+
+The resulting joined table should have two columns with column names EmployeeName and DepartmentName.
+--------------------------------------
+SELECT employees.employee_name AS EmployeeName,
+  departments.department_name AS DepartmentName
+FROM employees
+INNER JOIN departments
+ON employees.department_id = departments.id;
+--------------------------------------
+
+
+-------------------------------------------
+ADVANCED SQL Question
+
+============================================
+
+This question assesses your ability to perform subqueries to complete an SQL transformation by nesting one query within another query.
+
+Given a table named orders which includes columns for:
+
+order_id (integer)
+customer_id (text)
+product_id (text)
+quantity (real)
+order_date (date)
+Write an SQL query, including a subquery, to select the total number of orders placed by each distinct customer.
+
+-------------------------------------------------
+select customer_id, (select count(*) from orders as o2 where o2.customer_id=o1.customer_id) as total_orders from orders as o1 group by customer_id;
+-------------------------------------------------
+
+-------------------------------------------
+This question assesses your ability to perform set operations in SQL queries.
+
+Given two tables in a database, Store1 and Store2, each table includes columns for:
+
+order_id (integer)
+customer_name (text)
+total_amount (real)
+The Store1 table contains details of orders fulfilled by the company’s first store, while the Store2 table contains details of orders fulfilled by the company’s second store. Some customers placed orders from both stores, making their order entries common across both tables.
+
+Write an SQL query to find all common orders from the Store1 and Store2 tables.
+----------------------------------------------------------------
+SELECT order_id, customer_name, total_amount
+FROM Store1
+INTERSECT
+SELECT order_id, customer_name, total_amount
+FROM Store2;
+--------------------------------------------------------------------
+
+-----------------------------------------------------------
+This question assesses your ability to conditionally aggregate results based on a given set of conditions in SQL.
+
+You are given a table named weather_data in a database, which contains records of daily precipitation. The table includes columns for:
+
+date (date)
+precipitation (float)
+Write an SQL query to determine the total precipitation for "Rainy Day" (where precipitation is greater than 0) versus "Non-Rainy Day" (where precipitation is 0). Your result should return the type of day, Rainy or Non-Rainy, and the amount of precipitation for each type.
+
+Requirements and Assumptions:
+
+There should be two rows in the result: "Rainy Day" and "Non-Rainy Day"
+The sum for "Non-Rainy Day" will be 0.
+The sum for "Rainy Day" will be the sum of the precipitation for all rainy days.
+-----------------------------------------------------------------------------
+SELECT
+    CASE
+        WHEN precipitation > 0 THEN 'Rainy Day'
+        ELSE 'Non-Rainy Day'
+    END AS day_type,
+    SUM(precipitation) AS total_precipitation
+FROM weather_data
+GROUP BY
+    CASE
+        WHEN precipitation > 0 THEN 'Rainy Day'
+        ELSE 'Non-Rainy Day'
+    END;
+
+
+-----------------------------------------------------
+
+This question assesses your ability to manipulate date data using date functions in SQL.
+
+Given a table named CourseDetails in a database, which includes columns for:
+
+course_id (integer)
+course_name (text)
+course_start_date (datetime)
+Write an SQL query to determine the first assignment submission deadline for each course listed in the CourseDetails table. The query should return the course_id and the calculated deadline.
+
+The table stores information about various courses, including their start dates. The deadline for submitting the first assignment for each course is set to be exactly 5 days and 2 hours after the course’s start date.
+----------------------------------------------
+SELECT
+    course_id,
+    DATEADD(DAY, 5, DATEADD(HOUR, 2, course_start_date)) AS first_assignment_deadline
+FROM CourseDetails;
+
+SELECT
+    course_id,
+    DATE_ADD(DATE_ADD(course_start_date, INTERVAL 5 DAY), INTERVAL 2 HOUR) AS first_assignment_deadline
+FROM CourseDetails;
+
+-----------------------------------
+
+This question assesses your ability to manipulate number data using numeric functions in SQL.
+
+Given a table named TemperatureRecords in a database, which includes columns for:
+
+record_id (integer)
+date (date)
+location (text)
+temperature_morning (real)
+temperature_afternoon (real)
+temperature_evening (real)
+Write an SQL query to find the highest temperature recorded for each day at the location Springfield in the TemperatureRecords table.
+
+The table stores daily temperature records across various locations, capturing the morning, afternoon, and evening temperatures for each date. These temperatures are recorded in degrees Celsius.
+--------------------------------------
+
+SELECT
+    date,
+    location,
+    GREATEST(temperature_morning, temperature_afternoon, temperature_evening) AS highest_temperature
+FROM
+    TemperatureRecords
+WHERE
+    location = 'Springfield';
+
+------------------------------
+
+This question assesses your ability to manipulate string data using string functions in SQL.
+
+Given a new table named Desserts in a database, which includes columns for:
+
+id (integer)
+dish (text)
+topping (text)
+price (integer)
+Complete the following tasks:
+
+Write an SQL query that combines the dish and topping columns from the desserts table into a full_delicacy column. Be sure to add the word 'with' between the names in the full_delicacy column. Select just the full_delicacy column.
+Write an SQL query that replaces 'chocolate' in the dish column with 'sugar-free chocolate' in a column renamed sugar_free_chocolate_options in the desserts table. Select just the sugar_free_chocolate_options column.
+---------------------------------
+
+
+SELECT
+    dish || ' with ' || topping AS full_delicacy
+FROM
+    Desserts;
+SELECT
+    REPLACE(dish, 'chocolate', 'sugar-free chocolate') AS sugar_free_chocolate_options
+FROM
+    Desserts;
+
+
+-------------------------
+=========================
+
+Question: Which annotations are needed for your application when you need to run scheduled tasks asynchronously?
+Instruction: Choose all options that best answer the question.
+
+@EnableAsyncScheduling
+
+@EnableScheduling
+
+@EnableTimer
+
+@EnableAsync
+
+// 2,4
+
+==================
+Question: Which annotation allows us to extract elements of a dynamic URL?
+Instruction: Choose the option that best answers the question.
+
+@PathVariable
+
+@GetMapping
+
+@PostMapping
+
+@RequestParam
+
+1
+==========================
+Question: What Thymeleaf attribute is specified on a form to bind a form to a Java object?
+Instruction: Choose the option that best answers the question.
+
+th:value
+
+th:object
+
+th:text
+
+th:action
+
+2
+====================
+Question: Which of the annotations validates the submitted form?
+Instruction: Choose the option that best answers the question.
+
+@Valid
+
+@ModelAttribute
+
+@RequestParam
+
+@ValidateForm
+
+1
+=============
+
+Question: What annotation would you apply to the component which holds business logic in your application?
+Instruction: Choose the option that best answers the question.
+
+@Component
+
+@Service
+
+@Controller
+
+@Bean
+
+2
+======================
+
+Question: What kind of HTTP request would you make to add a new record to your database?
+Instruction: Choose the option that best answers the question.
+
+GET
+
+POST
+
+HEAD
+
+OPTIONS
+
+DELETE
+
+2
+
+================================
+Question: What is the most relevant HTTP request that you can make to remove an existing record in your database?
+Instruction: Choose the option that best answers the question.
+
+OPTIONS
+
+POST
+
+HEAD
+
+DELETE
+
+PUT
+
+GET
+
+3
+
+=====================
+
+Question: Which Spring module automatically provides implementations for CRUD operations on your database entities?
+Instruction: Choose the option that best answers the question.
+
+Spring Security
+
+Spring MVC
+
+Spring ORM
+
+Spring Data
+
+4
+=====================
+
+Question: How do you specify that an input text box cannot be edited?
+Instruction: Choose the option that best answers the question.
+
+Specify a value for the "readonly" attribute
+
+Set disabled=true
+
+Specify a value for the "editable" attribute
+
+Set enabled=false
+
+->Specify a value for the "readonly" attribute
+
+========================
+Question: Which statements accurately describe the @Cacheable annotation?
+Instruction: Choose all options that best answer the question.
+
+Once the response is cached, the code for the method is not invoked
+
+Cache responses are automatically updated when a change has occurred
+
+Cache responses are not automatically updated when a change has occurred
+
+Even though the response is cached, the code for the method is invoked
+
+1, 3
